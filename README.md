@@ -131,7 +131,11 @@ Además, la regla tiene un punto ciego por construcción: un jugador que se lesi
 
 | # | Qué le pedimos | Qué aceptamos | Qué rechazamos y por qué |
 |---|---|---|---|
-| 1 | <> | <> | <> |
+| 1 | Identificar cuál era nuestra ficha entre las problemáticas de la comisión. | La lista de fichas de fútbol de la comisión mañana con su dominio e IA declarada. | La idea de "DT Virtual" como nuestro dominio: la IA aclaró que ese nombre lo había propuesto ella en conversaciones anteriores y que no aparece en ninguna ficha. Trabajamos sobre M06. |
+| 2 | Proponer el sistema para M06 y elegir la pista. | Reglas si‑entonces con tres condiciones encadenadas, porque se pueden correr a mano en la mesa y explicar sin IA. | Usar solo minutos y distancia: el caso 12 (mucha carga, pero duerme 8,9 h) quedaba como falsa alarma. Agregamos el sueño. |
+| 3 | Elegir los umbrales. | Puntos medios calculados solo con los casos 1–14. | El corte de 150 minutos, aunque daba la prueba perfecta: queda pegado al caso 2 y elegirlo por la prueba sería usar los datos de prueba para construir. Elegimos 90 para priorizar la sensibilidad. |
+| 4 | Calcular las matrices y las métricas. | Las cuentas, después de verificarlas a mano caso por caso y con el script. | La exactitud como métrica principal: en prueba es igual a la de la línea base "siempre NO". |
+| 5 | Cambiar la IA declarada en el README a Claude. | Poner Claude, que es la IA con la que hicimos todo el trabajo del hackatón. | Nada, pero la IA nos advirtió que la ficha M06 figura con ChatGPT como IA declarada. Lo dejamos registrado acá para explicar la diferencia. |
 
 **Corridas contra el evaluador**
 
