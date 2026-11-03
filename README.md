@@ -64,24 +64,30 @@ También está en `sistema_M06.py`: `python sistema_M06.py <minutos> <distancia>
 
 | | Predice SÍ | Predice NO |
 |---|---|---|
-| **Real SÍ** | VP = <> | FN = <> |
-| **Real NO** | FP = <> | VN = <> |
+| **Real SÍ** | VP = 2 | FN = 0 |
+| **Real NO** | FP = 0 | VN = 12 |
+
+Control: 2 + 0 + 0 + 12 = 14. Lesionados reales: casos 1 y 2 (VP + FN = 2).
 
 **Prueba (casos 15–20)**
 
 | | Predice SÍ | Predice NO |
 |---|---|---|
-| **Real SÍ** | VP = <> | FN = <> |
-| **Real NO** | FP = <> | VN = <> |
+| **Real SÍ** | VP = 1 | FN = 0 |
+| **Real NO** | FP = 1 | VN = 4 |
+
+Control: 1 + 0 + 1 + 4 = 6. Lesionado real: caso 20 (detectado). Falsa alarma: caso 18 (122 min · 3,8 km · 5,7 h).
 
 | Métrica | Entrenamiento | Prueba |
 |---|---|---|
-| Exactitud | <> | <> |
-| Precisión | <> | <> |
-| Sensibilidad | <> | <> |
-| Especificidad | <> | <> |
+| Exactitud | (2 + 12) / 14 = 100 % | (1 + 4) / 6 = 83,3 % |
+| Precisión | 2 / (2 + 0) = 100 % | 1 / (1 + 1) = 50 % |
+| Sensibilidad | 2 / (2 + 0) = 100 % | 1 / (1 + 0) = 100 % |
+| Especificidad | 12 / (12 + 0) = 100 % | 4 / (4 + 1) = 80 % |
 
-**Entrenamiento contra prueba.** <¿Hay diferencia? ¿Por qué? ¿Sobreajuste o generalización?>
+**Entrenamiento contra prueba.** Sí hay diferencia: en entrenamiento acierta todo y en prueba aparece una falsa alarma (caso 18), así que la precisión cae de 100 % a 50 % y la especificidad a 80 %. Es una señal de **sobreajuste leve**: con solo 2 lesionados en entrenamiento, cualquier regla razonable los separa perfecto, y el 100 % de entrenamiento dice poco. Lo que sí **generaliza** es lo que más importa: la sensibilidad se mantiene en 100 % (detecta al único lesionado de prueba). Igual hay que leerlo con cuidado: la sensibilidad de prueba está calculada sobre **un solo caso positivo**, así que con un lesionado distinto podría haber dado 0 %. Con 20 casos no se puede afirmar que el sistema funciona; solo que no falla en estos.
+
+El caso 18 es la falsa alarma más entendible: corrió muchísimo a alta intensidad (3,8 km) y durmió poco; tiene el perfil de riesgo aunque no se lesionó.
 
 ## 4. El error más caro
 
