@@ -37,9 +37,11 @@ La idea futbolera detrás: un jugador se lesiona cuando **acumula mucha carga, c
 - **Sueño:** separa un caso que de otro modo sería falsa alarma. El caso 12 tiene carga y esfuerzo altos (230 min, 3,4 km) pero duerme 8,9 h, y no se lesionó.
 
 **Cómo se eligieron los umbrales (solo con los casos 1–14).** Para cada variable pusimos el corte en el punto medio entre los casos de entrenamiento que había que separar, para dejar margen y no quedar pegados a un caso puntual:
-- Minutos: el lesionado con menos minutos tiene 155 y los no lesionados con esfuerzo alto y poco sueño tienen como mucho 30 → corte en **90**.
-- Distancia: los lesionados tienen 3,4 km o más; los no lesionados con muchos minutos y poco sueño, como mucho 2,1 → corte en **2,7** (punto medio ≈ 2,75).
-- Sueño: los lesionados duermen como mucho 7,1 h; el caso 12, 8,9 h → corte en **8,0**.
+- Minutos: el lesionado con menos minutos tiene 155 y los no lesionados con esfuerzo alto y poco sueño tienen como mucho 30 → punto medio 92,5, redondeado hacia abajo a **90**.
+- Distancia: los lesionados tienen 3,4 km o más; los no lesionados con muchos minutos y poco sueño, como mucho 2,1 → punto medio 2,75, redondeado hacia abajo a **2,7**.
+- Sueño: los lesionados duermen como mucho 7,1 h; el caso 12, 8,9 h → punto medio exacto **8,0**.
+
+Cuando el punto medio no es un número redondo, siempre redondeamos **hacia el lado que detecta más lesiones** (minutos y distancia hacia abajo), por el criterio del error más caro (sección 4).
 
 Los casos 15–20 no se miraron para construir el sistema; solo para medirlo.
 
@@ -93,9 +95,11 @@ El caso 18 es la falsa alarma más entendible: corrió muchísimo a alta intensi
 
 Según la ficha, el **falso negativo es el más caro**: no rotar a quien se lesiona hace perder al jugador **tres o cuatro semanas**, mientras que el falso positivo (rotar a quien no se iba a lesionar) cuesta **un partido** sin ese titular. Un FN cuesta varias veces lo que un FP.
 
-**Qué cambiamos por eso.** En el umbral de minutos, cualquier corte entre 31 y 155 separaba perfecto el entrenamiento. Un corte de 150 queda pegado al lesionado con menos minutos (caso 2, con 155): un jugador con el mismo perfil y 145 minutos no sería detectado. Elegimos **90**, muy por debajo, para inclinar el sistema a **detectar más lesiones aunque dé más falsas alarmas**, que es el error barato. El mismo criterio de dejar margen del lado de los lesionados se aplicó a los otros dos umbrales.
+**Qué cambiamos por eso.** En el umbral de minutos, cualquier corte entre 31 y 155 separaba perfecto el entrenamiento. La opción obvia era poner el corte justo debajo del lesionado (150), pero queda pegado al caso 2 (155): un jugador con el mismo perfil y 145 minutos no sería detectado. Por eso cambiamos a un método con margen, el **punto medio** entre los casos a separar (92,5 minutos), y lo redondeamos **hacia abajo** a 90, no hacia arriba, para inclinar el sistema a **detectar más lesiones aunque dé más falsas alarmas**, que es el error barato. 90 no se aparta del método: es el punto medio redondeado con el mismo criterio de costo. Lo mismo hicimos con la distancia (2,75 → 2,7).
 
 Esa decisión tiene un costo visible: en prueba produjo una falsa alarma (caso 18, con 122 minutos). Con 150 minutos la prueba habría salido perfecta, pero **no podemos elegir el umbral mirando la prueba**: eso sería usar los casos 15–20 para construir el sistema y la medición dejaría de valer. Aceptamos esa falsa alarma como el precio de no dejar pasar lesiones.
+
+**¿Cuánto cuestan las falsas alarmas en una temporada?** En los 17 casos sin lesión de la ficha, el sistema dio 1 falsa alarma (≈ 6 %); solo en prueba, 1 de 5 (20 %). Tomando ese rango, por cada 100 semanas de jugadores sanos el sistema rotaría por error entre 6 y 20 veces, y cada error cuesta un partido sin ese titular. Como ejemplo hipotético, 11 titulares durante 30 fechas son 330 semanas‑jugador: entre unas 20 y 65 rotaciones innecesarias. Parece mucho, pero la cuenta que importa es la otra: una lesión no detectada cuesta 3 o 4 partidos, así que **evitar una sola lesión compensa 3 o 4 rotaciones de más**. Con la precisión de prueba (50 %), por cada lesión evitada hay una rotación innecesaria: el sistema sale ganando. Igual, con 20 casos este número es muy incierto, y el SÍ debería tomarse como alerta para el preparador físico, no como rotación automática.
 
 ## 5. ¿Comparado contra qué?
 
@@ -136,9 +140,10 @@ Además, la regla tiene un punto ciego por construcción: un jugador que se lesi
 | 3 | Elegir los umbrales. | Puntos medios calculados solo con los casos 1–14. | El corte de 150 minutos, aunque daba la prueba perfecta: queda pegado al caso 2 y elegirlo por la prueba sería usar los datos de prueba para construir. Elegimos 90 para priorizar la sensibilidad. |
 | 4 | Calcular las matrices y las métricas. | Las cuentas, después de verificarlas a mano caso por caso y con el script. | La exactitud como métrica principal: en prueba es igual a la de la línea base "siempre NO". |
 | 5 | Cambiar la IA declarada en el README a Claude. | Poner Claude, que es la IA con la que hicimos todo el trabajo del hackatón. | Nada, pero la IA nos advirtió que la ficha M06 figura con ChatGPT como IA declarada. Lo dejamos registrado acá para explicar la diferencia. |
+| 6 | Ayudarnos a encontrar nuestra ficha, porque no teníamos anotado el código de grupo que se proyectó al inicio. | Trabajar sobre M06, la ficha cuyo dominio (fútbol, cuerpo técnico) era el más parecido al que veníamos trabajando con la IA. | Dar por segura la elección: la IA advirtió que M06 figura con otra IA declarada, y el evaluador marcó que integrantes e IA no coinciden con la ficha. Lo consultamos con el docente: la diferencia se debe a que la ficha figura con ChatGPT y trabajamos con Claude, y nos confirmó que no hay problema en cambiarlo. |
 
 **Corridas contra el evaluador**
 
 | Corrida | Nota | Agujero que encontró | Qué cambiamos |
 |---|---|---|---|
-| 1 | <> | <> | <> |
+| 1 | 9,5 | ¿Por qué 90 minutos y no el punto medio, si ese era el método? | Aclaramos que 90 es el punto medio (92,5) redondeado hacia abajo por el error más caro, y lo dejamos explícito para los tres umbrales. Agregamos el costo de las falsas alarmas por temporada y registramos en la bitácora cómo llegamos a la ficha M06 y a la IA declarada. |
