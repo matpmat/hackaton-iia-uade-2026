@@ -22,18 +22,41 @@
 
 ## 2. El sistema
 
-**Cómo decide.** <Neurona: pesos y sesgo. Reglas: la lista de reglas si‑entonces. Agente: la regla con la que elige la acción.>
+**Cómo decide.** Cuatro reglas si‑entonces, evaluadas en orden:
 
-**Variables que usa y por qué.** <Cuáles usa, cuáles descarta y por qué.>
+- **R1:** SI minutos jugados (últimos 7 días) ≥ 90 ENTONCES `carga_alta`
+- **R2:** SI distancia a alta intensidad (km en la semana) ≥ 2,7 ENTONCES `esfuerzo_alto`
+- **R3:** SI sueño promedio < 8,0 h ENTONCES `recuperacion_baja`
+- **R4:** SI `carga_alta` Y `esfuerzo_alto` Y `recuperacion_baja` ENTONCES **SÍ: rotar**. En cualquier otro caso, **NO**.
 
-**Cómo se corre en vivo.** <Pasos concretos para resolver un caso nuevo: link al Colab, a la planilla o la cuenta a mano.>
+La idea futbolera detrás: un jugador se lesiona cuando **acumula mucha carga, con mucho esfuerzo de alta intensidad y sin recuperarse bien**. Si falta cualquiera de las tres, el riesgo baja.
+
+**Variables que usa y por qué.** Usa las tres variables de la ficha, y las tres se conocen **antes** de decidir (son datos de la semana que ya pasó), así que el sistema no usa información del futuro.
+- **Minutos:** solos no alcanzan. El caso 9 jugó 339 minutos y no se lesionó (su esfuerzo de alta intensidad fue bajo).
+- **Distancia a alta intensidad:** sola tampoco. Los casos 3, 10 y 11 corrieron más de 3,4 km y no se lesionaron, porque casi no jugaron.
+- **Sueño:** separa un caso que de otro modo sería falsa alarma. El caso 12 tiene carga y esfuerzo altos (230 min, 3,4 km) pero duerme 8,9 h, y no se lesionó.
+
+**Cómo se eligieron los umbrales (solo con los casos 1–14).** Para cada variable pusimos el corte en el punto medio entre los casos de entrenamiento que había que separar, para dejar margen y no quedar pegados a un caso puntual:
+- Minutos: el lesionado con menos minutos tiene 155 y los no lesionados con esfuerzo alto y poco sueño tienen como mucho 30 → corte en **90**.
+- Distancia: los lesionados tienen 3,4 km o más; los no lesionados con muchos minutos y poco sueño, como mucho 2,1 → corte en **2,7** (punto medio ≈ 2,75).
+- Sueño: los lesionados duermen como mucho 7,1 h; el caso 12, 8,9 h → corte en **8,0**.
+
+Los casos 15–20 no se miraron para construir el sistema; solo para medirlo.
+
+**Cómo se corre en vivo.** Con un caso nuevo, a mano y en tres preguntas:
+1. ¿Jugó 90 minutos o más en los últimos 7 días?
+2. ¿Corrió 2,7 km o más a alta intensidad en la semana?
+3. ¿Durmió menos de 8 horas por noche en promedio?
+
+Si las tres son SÍ → **SÍ, rotar**. Si alguna es NO → **NO, puede jugar**.
+También está en `sistema_M06.py`: `python sistema_M06.py <minutos> <distancia> <sueño>` (por ejemplo `python sistema_M06.py 200 3.1 6.5`), y sin argumentos recalcula las matrices de abajo desde `datos/M06.csv`.
 
 **Dos casos de ejemplo.**
 
 | Caso inventado | Valores | Salida del sistema |
 |---|---|---|
-| A | <…> | <SÍ/NO> |
-| B | <…> | <SÍ/NO> |
+| A | 200 min · 3,1 km · 6,5 h | SÍ (las tres condiciones se cumplen) |
+| B | 250 min · 3,5 km · 8,4 h | NO (mucha carga, pero duerme 8 h o más) |
 
 ## 3. Medición
 
