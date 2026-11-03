@@ -3,7 +3,7 @@
 **Integrantes:** Matias Pellegrini (grupo de un integrante)
 **IA declarada:** Claude
 **Pista:** Reglas
-**Publicación en LinkedIn:** <link>
+**Publicación en LinkedIn:** https://lnkd.in/p/d56rFA5a
 
 ---
 
