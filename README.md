@@ -91,22 +91,39 @@ El caso 18 es la falsa alarma más entendible: corrió muchísimo a alta intensi
 
 ## 4. El error más caro
 
-<¿Es peor el falso positivo o el falso negativo en su problema? ¿Por qué, según la ficha? ¿Qué cambiaron en el sistema para cometer menos ese error?>
+Según la ficha, el **falso negativo es el más caro**: no rotar a quien se lesiona hace perder al jugador **tres o cuatro semanas**, mientras que el falso positivo (rotar a quien no se iba a lesionar) cuesta **un partido** sin ese titular. Un FN cuesta varias veces lo que un FP.
+
+**Qué cambiamos por eso.** En el umbral de minutos, cualquier corte entre 31 y 155 separaba perfecto el entrenamiento. Un corte de 150 queda pegado al lesionado con menos minutos (caso 2, con 155): un jugador con el mismo perfil y 145 minutos no sería detectado. Elegimos **90**, muy por debajo, para inclinar el sistema a **detectar más lesiones aunque dé más falsas alarmas**, que es el error barato. El mismo criterio de dejar margen del lado de los lesionados se aplicó a los otros dos umbrales.
+
+Esa decisión tiene un costo visible: en prueba produjo una falsa alarma (caso 18, con 122 minutos). Con 150 minutos la prueba habría salido perfecta, pero **no podemos elegir el umbral mirando la prueba**: eso sería usar los casos 15–20 para construir el sistema y la medición dejaría de valer. Aceptamos esa falsa alarma como el precio de no dejar pasar lesiones.
 
 ## 5. ¿Comparado contra qué?
 
-**Línea base trivial.** <Qué resultado saca un sistema que responde siempre lo mismo, y cómo se compara el suyo.>
+**Línea base trivial.** Un sistema que dice **siempre NO** (nunca rota a nadie):
+- Entrenamiento: 12 / 14 = **85,7 %** de exactitud, sensibilidad **0 %**.
+- Prueba: 5 / 6 = **83,3 %** de exactitud, sensibilidad **0 %**.
+
+En prueba **nuestra exactitud (83,3 %) es igual a la de la línea base**. Por eso la exactitud no sirve para decir si el sistema es bueno: la "neurona tonta" que no mira ningún dato saca lo mismo. La diferencia está en lo que importa: la línea base **no detecta ninguna lesión** (sensibilidad 0 %), y nuestro sistema detecta la única que hubo (100 %), a cambio de una falsa alarma. El otro extremo, **siempre SÍ**, tiene sensibilidad 100 % pero precisión 1 / 6 = 16,7 % y especificidad 0 %: rota al plantel entero. Nuestro sistema logra la misma sensibilidad con 50 % de precisión y 80 % de especificidad.
 
 | Checklist (Clase 6) | Respuesta |
 |---|---|
-| ¿Qué datos? | <> |
-| ¿Qué métrica? | <> |
-| ¿Comparado contra qué? | <> |
-| ¿Quién lo midió? | <> |
+| ¿Qué datos? | Los 20 casos inventados de la ficha M06 (14 de entrenamiento, 6 de prueba). Solo 3 lesionados en total. No son datos reales de un plantel. |
+| ¿Qué métrica? | Sensibilidad como principal, con precisión y especificidad como control. La exactitud se informa pero no se usa para decidir. |
+| ¿Comparado contra qué? | Contra la línea base "siempre NO" (misma exactitud en prueba, 0 % de sensibilidad) y contra "siempre SÍ" (misma sensibilidad, mucha peor precisión). |
+| ¿Quién lo midió? | El propio grupo, sobre los datos de la ficha, a mano y verificado con `sistema_M06.py`. No hubo una medición independiente ni con datos nuevos. |
 
 ## 6. Riesgo: el camino completo
 
-<Datos → modelo → decisión → consecuencia aplicado a su caso. Al menos un riesgo concreto.>
+**Datos → modelo → decisión → consecuencia.**
+
+- **Datos:** 20 casos inventados con solo 3 lesiones, y el sueño es un dato que en la práctica **reporta el propio jugador**.
+- **Modelo:** tres umbrales aprendidos de apenas 2 lesionados de entrenamiento.
+- **Decisión:** el cuerpo técnico rota (o no) a un jugador según la recomendación.
+- **Consecuencia:** el jugador se pierde (o juega) la fecha.
+
+**Riesgo concreto.** Como la regla exige dormir menos de 8 horas, un jugador que quiere jugar puede **declarar que duerme más** y el sistema nunca lo va a marcar, aunque tenga carga y esfuerzo altísimos: el dato autorreportado se puede manipular justo para evitar la decisión que el sistema toma. Si eso pasa, el FN aparece en el peor caso: el jugador más cargado sigue jugando y se lesiona tres o cuatro semanas. Mitigación: tratar el SÍ como alerta para el preparador físico (no como decisión automática), contrastar el sueño con un dato medido (pulsera o control del club) y revisar al jugador con carga y esfuerzo altos aunque duerma bien.
+
+Además, la regla tiene un punto ciego por construcción: un jugador que se lesiona **con poca carga** (por ejemplo, volviendo de una lesión anterior) nunca va a ser marcado, porque esa situación no aparece en los datos.
 
 ## 7. Bitácora
 
