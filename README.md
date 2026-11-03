@@ -1,10 +1,9 @@
-# <Código> · <Título de su problemática>
+# M06 · ¿Rotamos a este jugador?
 
-> **Hackatón IIA · UADE · 3.4.257.** Este README es la plantilla del grupo. En su fork, reemplacen todo lo que está entre `< >` y borren esta nota. Las bases están en `BASES.md` y su ficha en `problematicas/`.
 
-**Integrantes:** 
-**IA declarada:** <la del grupo desde la Clase 1>
-**Pista:** <Neurona / Reglas / Agente>
+**Integrantes:** Matias Pellegrini
+**IA declarada:** Claude
+**Pista:** Reglas
 **Publicación en LinkedIn:** <link>
 
 ---
